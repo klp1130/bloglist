@@ -1,0 +1,20 @@
+{
+  "name": "bloglist",
+  "version": "1.0.0",
+  "description": "a list of blogs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \\\"Error: no test specified\\\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/klp1130/bloglist.git"
+  },
+  "author": "Keenan Lee-Peters",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/klp1130/bloglist/issues"
+  },
+  "homepage": "https://github.com/klp1130/bloglist#readme"
+}
