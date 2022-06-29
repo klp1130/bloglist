@@ -3,7 +3,7 @@ const dummy = (blogs) => {
     //
 }
 
-model.exports = {
+module.exports = {
     dummy
 }
 
