@@ -39,7 +39,7 @@ const mostBlogs = (blogs) => {
 }
 
 const mostLikes = (blogs) => {
-    let blog = _.orderBy(blogs, ['likes'], ['des'])[0];
+    let blog = _.orderBy(blogs, ['likes'], ['des'])[0]
     return ({ author: blog.author, likes: blog.likes })
 }
 
