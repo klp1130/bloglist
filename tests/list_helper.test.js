@@ -76,4 +76,9 @@ describe('total likes', () => {
         const result = listHelper.totalLikes(listWithOneBlog)
         expect(result).toBe(5)
     })
+
+    test('when list has multiple blogs', () => {
+        const result = listHelper.totalLikes(blogs)
+        expect(result).toBe(36)
+    })
 })
