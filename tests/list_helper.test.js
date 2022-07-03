@@ -103,8 +103,11 @@ describe('most blogs', () => {
 describe('most likes', () => {
     test('check for most likes', () => {
         const result = listHelper.mostLikes(blogs)
-        const blog = { author: 'Edsger W. Dijkstra', likes: 12 }
-        expect(result).toEqual(blog)
+
+        expect(result).toEqual({
+            'author': 'Edsger W. Dijkstra',
+            'likes': 17
+        })
     })
 })
 

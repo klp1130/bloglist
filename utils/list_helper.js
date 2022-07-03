@@ -1,6 +1,6 @@
 //Helper functions go here
 
-const blog = require("../models/blog")
+const blog = require('../models/blog')
 const _ = require('lodash')
 
 
@@ -39,11 +39,23 @@ const mostBlogs = (blogs) => {
 }
 
 const mostLikes = (blogs) => {
-    let blog = _.orderBy(blogs, ['likes'], ['des'])[0]
-    return ({ author: blog.author, likes: blog.likes })
+    let authorWithMostLikes = {}
+    blogs.forEach(blog => {
+        if (blog.author in authorWithMostLikes) {
+            authorWithMostLikes[blog.author] += blog.likes
+        } else {
+            authorWithMostLikes[blog.author] = blog.likes
+        }
+    })
+
+    const maxValue = Math.max(...Object.values(authorWithMostLikes))
+    const maxIndex = Object.keys(authorWithMostLikes).find(key => authorWithMostLikes[key] === maxValue)
+
+    return {
+        'author': maxIndex,
+        'likes': maxValue
+    }
 }
-
-
 module.exports = {
     dummy,
     totalLikes,
