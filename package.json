@@ -4,10 +4,11 @@
   "description": "a list of blogs",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "jest --verbose",
-    "dev": "nodemon index.js",
-    "lint": "eslint ."
+    "start": "NODE_ENV=production node index.js",
+    "dev": "NODE_ENV=development nodemon index.js",
+    "lint": "eslint .", 
+    "test": "NODE_ENV=test jest --verbose --runInBand"
+
   },
   "repository": {
     "type": "git",
