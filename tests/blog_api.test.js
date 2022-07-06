@@ -46,6 +46,25 @@ test('blog has property id', async () => {
     expect(response.body[0].id).toBeDefined()
 })
 
+test('POST request creates new blog post', async () => {
+    const newBlog = {
+        _id: 'async/await blog',
+        title: 'blogtastic',
+        author: 'Michael Zhan',
+        url: 'https://reactpatterns.com/',
+        likes: 1,
+        __v: 0
+    }
+
+    await api
+        .post
+        .send(newBlog)
+        .expect(400)
+
+    const response = await api.post('/api/blogs')
+    expect(response.body).toHaveLength(initialBlogs.length)
+})
+
 
 afterAll(() => {
     mongoose.connection.close()
