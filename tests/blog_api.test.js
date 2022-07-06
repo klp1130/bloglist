@@ -42,10 +42,14 @@ test('POST request creates new blog post', async () => {
         .expect(200)
         .expect('Content-Type', /application\/json/)
 
-    const response = await api.post('/api/blogs')
-
-    expect(response.body).toHaveLength(helper.initialBlogs.length+1)
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length+1)
+    // test for if new blog added has same as used in test
+    const contents = blogsAtEnd.map(n => n.author)
+    expect(contents).toContain('Michael Zhan')
 })
+
+
 
 
 afterAll(() => {
