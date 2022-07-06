@@ -30,7 +30,6 @@ test('blog has property id', async () => {
 
 test('POST request creates new blog post', async () => {
     const newBlog = {
-        _id: 'async/await blog',
         title: 'blogtastic',
         author: 'Michael Zhan',
         url: 'https://reactpatterns.com/',
