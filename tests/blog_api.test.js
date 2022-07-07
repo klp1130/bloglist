@@ -49,6 +49,8 @@ test('POST request creates new blog post', async () => {
     expect(contents).toContain('Michael Zhan')
 })
 
+//test that verifies that if the likes property is missing from
+//the request, it will default to the value 0.
 
 
 
