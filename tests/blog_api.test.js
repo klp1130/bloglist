@@ -51,6 +51,11 @@ test('POST request creates new blog post', async () => {
 
 //test that verifies that if the likes property is missing from
 //the request, it will default to the value 0.
+test('if like property is missing default value is 0', async () => {
+    const response = await api.get('/api/blogs')
+    expect(response.body.likes).toBe(0)
+})
+
 
 
 
