@@ -11,9 +11,9 @@ blogsRouter.post('/', async (request, response) => {
     const body = request.body
 
     const blog = new Blog({
-        title: body.title,
+        title: body.title === undefined ? '400 Bad Request' : body.title,
         author: body.author,
-        url: body.url,
+        url: body.url === undefined ? '400 Bad Request' : body.url,
         likes: body.likes === undefined ? 0 : body.likes,
     })
 
