@@ -51,9 +51,29 @@ test('POST request creates new blog post', async () => {
 
 //test that verifies that if the likes property is missing from
 //the request, it will default to the value 0.
-test('if like property is missing default value is 0', async () => {
+test('if likes undefined, set to 0', async () => {
+    const newBlog = {
+        title: 'blogtastic',
+        author: 'Michael Zhan',
+        url: 'https://reactpatterns.com/',
+    }
+
+    const checkBlog = {
+        title: 'blogtastic',
+        author: 'Michael Zhan',
+        url: 'https://reactpatterns.com/',
+        likes: 0
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
     const response = await api.get('/api/blogs')
-    expect(response.body.likes).toBe(0)
+    const result = response.body[response.body.length - 1]
+    expect(result.likes).toEqual(checkBlog.likes)
 })
 
 
