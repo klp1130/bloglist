@@ -87,20 +87,10 @@ test('if title is missing return 400', async () => {
         likes: 2
     }
 
-    const checkBlog = {
-        title: 'blogtastic',
-        author: 'Michael Zhan',
-        url: 'https://reactpatterns.com/',
-        likes: 2
-    }
     await api
         .post('/api/blogs')
         .send(newBlog)
         .expect(400)
-        .expect('Content-Type', /application\/jason/)
-
-    const response = await api.get('/api/blogs')
-    expect(response).toThrow('400 Bad Request')
 
 
 })
@@ -116,10 +106,7 @@ test('if URL is missing return 400', async () => {
         .post('/api/blogs')
         .send(newBlog)
         .expect(400)
-        .expect('Content-Type', /application\/jason/)
 
-    const response = await api.get('/api/blogs')
-    expect(response).toThrow('400 Bad Request')
 })
 
 
