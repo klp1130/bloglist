@@ -80,7 +80,7 @@ test('if likes undefined, set to 0', async () => {
 verifies that if title and URL properties are missing from the request data, the backend
 responds with status code 400 bad request*/
 
-test('if title missing return 400', async () => {
+test('if title is missing return 400', async () => {
     const newBlog = {
         author: 'Michael Zhan',
         url: 'https://reactpatterns.com/',
@@ -100,13 +100,26 @@ test('if title missing return 400', async () => {
         .expect('Content-Type', /application\/jason/)
 
     const response = await api.get('/api/blogs')
-    expect(response).toThrow('Bad Request')
+    expect(response).toThrow('400 Bad Request')
 
 
 })
 
-test('if title missing return 400', async () => {
+test('if URL is missing return 400', async () => {
+    const newBlog = {
+        title: 'blogtastic',
+        author: 'Michael Zhan',
+        likes: 2
+    }
 
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(400)
+        .expect('Content-Type', /application\/jason/)
+
+    const response = await api.get('/api/blogs')
+    expect(response).toThrow('400 Bad Request')
 })
 
 
