@@ -10,10 +10,16 @@ blogsRouter.get('/', async (request, response) => {
 blogsRouter.post('/', async (request, response) => {
     const body = request.body
 
+    if (!request.body.url || !request.body.title) {
+        return response.status(400).json({
+            error: 'missing content'
+        })
+    }
+
     const blog = new Blog({
-        title: body.title === undefined ? '400 Bad Request' : body.title,
+        title: body.title,
         author: body.author,
-        url: body.url === undefined ? '400 Bad Request' : body.url,
+        url: body.url,
         likes: body.likes === undefined ? 0 : body.likes,
     })
 
