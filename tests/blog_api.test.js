@@ -3,6 +3,7 @@ const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
 const helper = require('./test_helper')
+
 const Blog = require('../models/blog')
 
 /* initializing the database before every
@@ -15,6 +16,7 @@ beforeEach(async () => {
     blogObject = new Blog(helper.initialBlogs[1])
     await blogObject.save()
 })
+
 
 test('blogs are returned as json', async () => {
     await api
@@ -109,7 +111,27 @@ test('if URL is missing return 400', async () => {
 
 })
 
+/* deleting a single blog resource */
+describe('deletion of a blog', () => {
+    test('succeeds with status 204 if id is valid', async () => {
+        const blogAtStart = await helper.blogsInDb()
+        const blogToDelete = blogAtStart[0]
 
+        await api
+            .delete(`/api/blogs/${blogToDelete.id}`)
+            .expect(204) //no content: a request has succeeded, but no need to navigate away from current page
+
+        const blogsAtEnd = await helper.blogsInDb()
+
+        expect(blogsAtEnd).toHaveLength(helper.initialBlogs - 1)
+
+        const contents = blogsAtEnd.map(r => r.title)
+
+        expect(contents).not.toContain(blogToDelete.title)
+    })
+})
+
+/* update a single blog number of likes */
 
 afterAll(() => {
     mongoose.connection.close()
