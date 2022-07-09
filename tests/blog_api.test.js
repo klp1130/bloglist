@@ -142,7 +142,7 @@ describe('updated a single blog', () => {
         }
 
         await api
-            .put('/api/blogs/blogs')
+            .post('/api/blogs/blogs')
             .send(newBlog)
             .expect(200) // successful response
 
@@ -153,6 +153,18 @@ describe('updated a single blog', () => {
             ...blogToUpdate,
             likes: blogToUpdate.like +1
         }
+
+        await api
+            .put(`/api/blog/${blogToUpdate.id}`)
+            .send(updatedBlog)
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length +1)
+        const foundBlog = blogsAtEnd.find(blog => blog.likes === 13)
+        expect(foundBlog.likes).toBe(13)
+
 
 
 
