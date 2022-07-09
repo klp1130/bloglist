@@ -135,9 +135,9 @@ describe('deletion of a blog', () => {
 describe('updated a single blog', () => {
     test('succeeds in updating likes', async () => {
         const newBlog = {
-            title: "Masterpiece",
-            author: "Edsger W. Dijkstra",
-            url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+            title: 'Masterpiece',
+            author: 'Edsger W. Dijkstra',
+            url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
             likes:12
         }
 
@@ -164,10 +164,6 @@ describe('updated a single blog', () => {
         expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length +1)
         const foundBlog = blogsAtEnd.find(blog => blog.likes === 13)
         expect(foundBlog.likes).toBe(13)
-
-
-
-
 
     })
 })
