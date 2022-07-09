@@ -138,24 +138,24 @@ describe('updated a single blog', () => {
             title: 'Masterpiece',
             author: 'Edsger W. Dijkstra',
             url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
-            likes:12
+            likes: 12
         }
 
         await api
-            .post('/api/blogs/blogs')
+            .post('/api/blogs')
             .send(newBlog)
             .expect(200) // successful response
 
-        const allBlogs = await helper.blogsInDb
+        const allBlogs = await helper.blogsInDb()
         const blogToUpdate = allBlogs.find(blog => blog.title === newBlog.title)
 
         const updatedBlog = {
             ...blogToUpdate,
-            likes: blogToUpdate.like +1
+            likes: blogToUpdate.likes +1
         }
 
         await api
-            .put(`/api/blog/${blogToUpdate.id}`)
+            .put(`/api/blogs/${blogToUpdate.id}`)
             .send(updatedBlog)
             .expect(200)
             .expect('Content-Type', /application\/json/)
