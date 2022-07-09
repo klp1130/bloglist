@@ -131,7 +131,34 @@ describe('deletion of a blog', () => {
     })
 })
 
-/* update a single blog number of likes */
+/* update a single blog */
+describe('updated a single blog', () => {
+    test('succeeds in updating likes', async () => {
+        const newBlog = {
+            title: "Masterpiece",
+            author: "Edsger W. Dijkstra",
+            url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+            likes:12
+        }
+
+        await api
+            .put('/api/blogs/blogs')
+            .send(newBlog)
+            .expect(200) // successful response
+
+        const allBlogs = await helper.blogsInDb
+        const blogToUpdate = allBlogs.find(blog => blog.title === newBlog.title)
+
+        const updatedBlog = {
+            ...blogToUpdate,
+            likes: blogToUpdate.like +1
+        }
+
+
+
+
+    })
+})
 
 afterAll(() => {
     mongoose.connection.close()
