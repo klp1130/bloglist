@@ -12,7 +12,7 @@ blogsRouter.get('/', async (request, response) => {
 blogsRouter.post('/', async (request, response) => {
     const body = request.body
 
-    const user = await User.findById(body.userId)
+    const user = await User .findById(body.userId)
 
     if (!request.body.url || !request.body.title) {
         return response.status(400).json({
