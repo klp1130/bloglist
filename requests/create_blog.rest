@@ -1,0 +1,13 @@
+POST http://localhost:3003/api/blogs
+
+Content-Type: application/json
+
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5c2VybmFtZSI6Im1sdXVra2FpIiwiaW
+
+{
+    "title": "Blog from test_user to delete",
+    "author": "test_user",
+    "url": "dsfsdf.com",
+    "likes": 1,
+    "userId": "62bc5b624e7631e78115b3e0"
+}
