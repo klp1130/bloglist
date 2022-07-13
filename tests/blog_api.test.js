@@ -168,6 +168,29 @@ describe('updated a single blog', () => {
     })
 })
 
+describe('check that invalid users are not created and returns correct status code', () => {
+    test('username already taken expect status 400', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const newUser = {
+            username: 'root',
+            name: 'superuser',
+            password: 'salainen'
+        }
+
+        const result = await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+
+        expect(result.body.error).toContain('username must be unique')
+
+        const usersAtEnd = await helper.usersInDb()
+        expect(usersAtEnd).toHaveLength(usersAtStart.length)
+    })
+})
+
 
 afterAll(() => {
     mongoose.connection.close()
