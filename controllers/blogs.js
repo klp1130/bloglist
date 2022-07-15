@@ -53,17 +53,12 @@ blogsRouter.delete('/:id', async (request, response) => {
     const user = await User.findById(request.params.id)
     const blog = await Blog.findById(request.params.id)
     //_id or id?
-    if ( blog.user.toString() !== user._id.toString()) {
-        return response(401).json({ error: 'only the creator can delete blogs' })
+    if ( blog.user.toString() === user._id.toString()) {
+        await Blog.findByIdAndRemove(request.params.id)
+        return response(201).end
+    } else {
+        return response.status(403).json({ error: 'only the creator can delete blogs' })
     }
-
-    user.blogs = user.blogs.filter(
-        b => b.toString() !==blog.id.toString()
-    )
-
-    await blog.remove()
-    await user.save()
-    response.status(204).end()
 
 })
 
