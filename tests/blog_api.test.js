@@ -5,6 +5,7 @@ const api = supertest(app)
 const helper = require('./test_helper')
 
 const Blog = require('../models/blog')
+const { set } = require('../app')
 
 /* initializing the database before every
  test with the beforeEach function */
@@ -38,8 +39,11 @@ test('POST request creates new blog post', async () => {
         likes: 1,
     }
 
+    token = null
+
     await api
         .post('/api/blogs')
+        .set('authorization', `Bearer ${token}` )
         .send(newBlog)
         .expect(200)
         .expect('Content-Type', /application\/json/)
