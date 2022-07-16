@@ -5,15 +5,6 @@ const User = require('../models/user')
 
 const jwt = require('jsonwebtoken')
 
-
-const verify = (request, response) => {
-    const decodedToken = jwt.verify(request.token, process.env.SECRET)
-    if(!request.token || !decodedToken.id) {
-        response.status(401).json({ error: 'token missing or invalid' })
-    }
-    return decodedToken
-}
-
 blogsRouter.get('/', async (request, response) => {
     const blogs = await Blog
         .find({}).populate('user', { username: 1, name: 1 })
@@ -22,44 +13,56 @@ blogsRouter.get('/', async (request, response) => {
 
 
 blogsRouter.post('/', async (request, response) => {
-    const decodedToken = verify(request, response)
-    const user = await User .findById(decodedToken.id)
-    const body = request.body
+    const { body } = request
 
-    if (!request.body.url || !request.body.title) {
-        return response.status(400).json({
-            error: 'missing content'
-        })
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
+
+    // check for valid token
+    if (!request.token || !decodedToken || !decodedToken.id) {
+        return response.status(401).json({ error: 'token missing or invalid' })
     }
+
+    const user = await User.findById(decodedToken.id)
 
     const blog = new Blog({
         title: body.title,
         author: body.author,
         url: body.url,
-        likes: body.likes === undefined ? 0 : body.likes,
-        user: user._id
+        likes: body.likes,
+        user: user._id,
     })
 
     const savedBlog = await blog.save()
     user.blogs = user.blogs.concat(savedBlog._id)
     await user.save()
 
-    response.status(201).json(savedBlog)
+    response.status(201).json(savedBlog.toJSON())
 })
 
+
 blogsRouter.delete('/:id', async (request, response) => {
-    verify(request, response)
+    const { id } = request.params
 
-    const user = await User.findById(request.params.id)
-    const blog = await Blog.findById(request.params.id)
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
 
-    if ( blog.user.toString() === user.id.toString) {
-        await Blog.findByIdAndRemove(request.params.id)
-        return response(201).end
-    } else {
-        return response.status(403).json({ error: 'only the creator can delete blogs' })
+    // check for valid token
+    if (!request.token || !decodedToken || !decodedToken.id) {
+        return response.status(401).json({ error: 'token missing or invalid' })
     }
 
+    const blog = await Blog.findById(id)
+
+    const user = await User.findById(decodedToken.id)
+
+    // Check if creator of blog is user trying to delete it.
+    if (blog.user.toString() === user._id.toString()) {
+        await Blog.findByIdAndRemove(id)
+        response.status(204).end()
+    } else {
+        response
+            .status(401)
+            .json({ error: 'You are not authorized to delete this blog' })
+    }
 })
 
 blogsRouter.put('/:id', async (request, response) => {
