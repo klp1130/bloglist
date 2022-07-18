@@ -30,99 +30,121 @@ test('blog has property id', async () => {
     const response = await api.get('/api/blogs')
     expect(response.body[0].id).toBeDefined()
 })
+describe('test with logged in user', () => {
+    let headers
 
-test('POST request creates new blog post', async () => {
-    const newBlog = {
-        title: 'blogtastic',
-        author: 'Michael Zhan',
-        url: 'https://reactpatterns.com/',
-        likes: 1,
-    }
+    beforeEach(async () => {
+        const newUser = {
+            username: 'username',
+            name: 'username',
+            password: 'password'
+        }
 
-    token = null
+        await api
+            .post('/api/login')
+            .send(newUser)
 
-    await api
-        .post('/api/blogs')
-        .set('authorization', `Bearer ${token}` )
-        .send(newBlog)
-        .expect(201)
-        .expect('Content-Type', /application\/json/)
+        const result = await api
+            .post
+            .send(newUser)
 
-    const blogsAtEnd = await helper.blogsInDb()
-    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length+1)
-    // test for if new blog added has same as used in test
-    const contents = blogsAtEnd.map(n => n.author)
-    expect(contents).toContain('Michael Zhan')
-})
+        headers = {
+            'Authorization': `bearer ${result.body.token}`
+        }
+    })
 
-//test that verifies that if the likes property is missing from
-//the request, it will default to the value 0.
-test('if likes undefined, set to 0', async () => {
-    const newBlog = {
-        title: 'blogtastic',
-        author: 'Michael Zhan',
-        url: 'https://reactpatterns.com/',
-    }
+    test('POST request creates new blog post', async () => {
 
-    const checkBlog = {
-        title: 'blogtastic',
-        author: 'Michael Zhan',
-        url: 'https://reactpatterns.com/',
-        likes: 0
-    }
+        const newBlog = {
+            title: 'blogtastic',
+            author: 'Michael Zhan',
+            url: 'https://reactpatterns.com/',
+            likes: 1,
+        }
 
-    await api
-        .post('/api/blogs')
-        .send(newBlog)
-        .expect(200)
-        .expect('Content-Type', /application\/json/)
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(201)
+            .set(headers)
+            .expect('Content-Type', /application\/json/)
 
-    const response = await api.get('/api/blogs')
-    const result = response.body[response.body.length - 1]
-    expect(result.likes).toEqual(checkBlog.likes)
-})
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length+1)
+        // test for if new blog added has same as used in test
+        const contents = blogsAtEnd.map(n => n.author)
+        expect(contents).toContain('Michael Zhan')
+    })
 
-/* write a test related to creating new blogs (post:api/blogs) endpoint, that
-verifies that if title and URL properties are missing from the request data, the backend
-responds with status code 400 bad request*/
+    //test that verifies that if the likes property is missing from
+    //the request, it will default to the value 0.
+    test('if likes undefined, set to 0', async () => {
+        const newBlog = {
+            title: 'blogtastic',
+            author: 'Michael Zhan',
+            url: 'https://reactpatterns.com/',
+        }
 
-test('if title is missing return 400', async () => {
-    const newBlog = {
-        author: 'Michael Zhan',
-        url: 'https://reactpatterns.com/',
-        likes: 2
-    }
+        const checkBlog = {
+            title: 'blogtastic',
+            author: 'Michael Zhan',
+            url: 'https://reactpatterns.com/',
+            likes: 0
+        }
 
-    await api
-        .post('/api/blogs')
-        .send(newBlog)
-        .expect(400)
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .set(headers)
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
 
+        const response = await api.get('/api/blogs')
+        const result = response.body[response.body.length - 1]
+        expect(result.likes).toEqual(checkBlog.likes)
+    })
 
-})
+    /* write a test related to creating new blogs (post:api/blogs) endpoint, that
+    verifies that if title and URL properties are missing from the request data, the backend
+    responds with status code 400 bad request*/
 
-test('if URL is missing return 400', async () => {
-    const newBlog = {
-        title: 'blogtastic',
-        author: 'Michael Zhan',
-        likes: 2
-    }
+    test('if title is missing return 400', async () => {
+        const newBlog = {
+            author: 'Michael Zhan',
+            url: 'https://reactpatterns.com/',
+            likes: 2
+        }
 
-    await api
-        .post('/api/blogs')
-        .send(newBlog)
-        .expect(400)
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .set(headers)
+            .expect(400)
+    })
 
-})
+    test('if URL is missing return 400', async () => {
+        const newBlog = {
+            title: 'blogtastic',
+            author: 'Michael Zhan',
+            likes: 2
+        }
 
-/* deleting a single blog resource */
-describe('deletion of a blog', () => {
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .set(headers)
+            .expect(400)
+
+    })
+
+    /* deleting a single blog resource */
     test('succeeds with status 204 if id is valid', async () => {
         const blogAtStart = await helper.blogsInDb()
         const blogToDelete = blogAtStart[0]
 
         await api
             .delete(`/api/blogs/${blogToDelete.id}`)
+            .set(headers)
             .expect(204) //no content: a request has succeeded, but no need to navigate away from current page
 
         const blogsAtEnd = await helper.blogsInDb()
@@ -133,10 +155,8 @@ describe('deletion of a blog', () => {
 
         expect(contents).not.toContain(blogToDelete.title)
     })
-})
 
 /* update a single blog */
-describe('updated a single blog', () => {
     test('succeeds in updating likes', async () => {
         const newBlog = {
             title: 'Masterpiece',
@@ -148,6 +168,7 @@ describe('updated a single blog', () => {
         await api
             .post('/api/blogs')
             .send(newBlog)
+            .set(headers)
             .expect(200) // successful response
 
         const allBlogs = await helper.blogsInDb()
@@ -161,6 +182,7 @@ describe('updated a single blog', () => {
         await api
             .put(`/api/blogs/${blogToUpdate.id}`)
             .send(updatedBlog)
+            .set(headers)
             .expect(200)
             .expect('Content-Type', /application\/json/)
 
@@ -170,9 +192,7 @@ describe('updated a single blog', () => {
         expect(foundBlog.likes).toBe(13)
 
     })
-})
 
-describe('check that invalid users are not created and returns correct status code', () => {
     test('username already taken expect status 400', async () => {
         const usersAtStart = await helper.usersInDb()
 
@@ -185,6 +205,7 @@ describe('check that invalid users are not created and returns correct status co
         const result = await api
             .post('/api/users')
             .send(newUser)
+            .set(headers)
             .expect(400)
             .expect('Content-Type', /application\/json/)
 
@@ -206,6 +227,7 @@ describe('check that invalid users are not created and returns correct status co
         const result = await api
             .post('/api/users')
             .send(newUser)
+            .set(headers)
             .expect(400)
             .expect('Content-Type', /application\/json/)
 
