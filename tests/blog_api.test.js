@@ -41,11 +41,11 @@ describe('test with logged in user', () => {
         }
 
         await api
-            .post('/api/login')
+            .post('/api/users')
             .send(newUser)
 
         const result = await api
-            .post
+            .post('/api/login')
             .send(newUser)
 
         headers = {
@@ -85,23 +85,14 @@ describe('test with logged in user', () => {
             url: 'https://reactpatterns.com/',
         }
 
-        const checkBlog = {
-            title: 'blogtastic',
-            author: 'Michael Zhan',
-            url: 'https://reactpatterns.com/',
-            likes: 0
-        }
-
-        await api
+        const response = await api
             .post('/api/blogs')
             .send(newBlog)
             .set(headers)
-            .expect(200)
+            .expect(201)
             .expect('Content-Type', /application\/json/)
 
-        const response = await api.get('/api/blogs')
-        const result = response.body[response.body.length - 1]
-        expect(result.likes).toEqual(checkBlog.likes)
+        expect(response.body.likes).toBe(0)
     })
 
     /* write a test related to creating new blogs (post:api/blogs) endpoint, that
@@ -169,7 +160,7 @@ describe('test with logged in user', () => {
             .post('/api/blogs')
             .send(newBlog)
             .set(headers)
-            .expect(200) // successful response
+            .expect(201) // successful response
 
         const allBlogs = await helper.blogsInDb()
         const blogToUpdate = allBlogs.find(blog => blog.title === newBlog.title)
