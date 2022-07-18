@@ -130,8 +130,21 @@ describe('test with logged in user', () => {
 
     /* deleting a single blog resource */
     test('succeeds with status 204 if id is valid', async () => {
-        const blogAtStart = await helper.blogsInDb()
-        const blogToDelete = blogAtStart[0]
+        const newBlog = {
+            title: 'The best blog ever',
+            author: 'Me',
+            url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
+            likes: 12
+        }
+
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .set(headers)
+            .expect(201)
+
+        const allBlogs = await helper.blogsInDb()
+        const blogToDelete = allBlogs.find(blog => blog.title ===newBlog.title)
 
         await api
             .delete(`/api/blogs/${blogToDelete.id}`)
@@ -140,7 +153,7 @@ describe('test with logged in user', () => {
 
         const blogsAtEnd = await helper.blogsInDb()
 
-        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
 
         const contents = blogsAtEnd.map(r => r.title)
 
