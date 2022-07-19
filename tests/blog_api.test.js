@@ -160,7 +160,7 @@ describe('test with logged in user', () => {
         expect(contents).not.toContain(blogToDelete.title)
     })
 
-/* update a single blog */
+    /* update a single blog */
     test('succeeds in updating likes', async () => {
         const newBlog = {
             title: 'Masterpiece',
